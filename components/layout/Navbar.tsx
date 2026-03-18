@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { Landmark, FileText, Calculator } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { AYSwitcher } from '@/components/AYSwitcher'
 
 export function Navbar() {
     return (
@@ -15,20 +17,25 @@ export function Navbar() {
                             Mahanka Tax Reckoner
                         </span>
                     </Link>
-                    <Badge variant="default" className="hidden md:inline-flex bg-blue-600/10 text-blue-500 hover:bg-blue-600/20 border border-blue-600/20">
+                    <Badge variant="default" className="hidden md:inline-flex bg-blue-600/10 text-blue-500 hover:bg-blue-600/20 border border-blue-600/20 shadow-none">
                         New Income-tax Act 2025
                     </Badge>
                 </div>
 
-                <nav className="flex items-center gap-6 text-sm font-medium">
-                    <Link href="#tax-slabs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
-                        <Calculator className="h-4 w-4" />
-                        <span className="hidden sm:inline">Tax Slabs</span>
-                    </Link>
-                    <Link href="#tds-tcs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
-                        <FileText className="h-4 w-4" />
-                        <span className="hidden sm:inline">TDS / TCS</span>
-                    </Link>
+                <nav className="flex items-center gap-4 sm:gap-6 text-sm font-medium">
+                    <Suspense fallback={<div className="h-9 w-[160px] animate-pulse bg-muted rounded-xl" />}>
+                        <AYSwitcher />
+                    </Suspense>
+                    <div className="hidden lg:flex items-center gap-6 border-l border-border/40 pl-6 ml-2">
+                        <Link href="#tax-slabs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
+                            <Calculator className="h-4 w-4" />
+                            <span>Tax Slabs</span>
+                        </Link>
+                        <Link href="#tds-tcs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            <span>TDS / TCS</span>
+                        </Link>
+                    </div>
                 </nav>
             </div>
         </header>
