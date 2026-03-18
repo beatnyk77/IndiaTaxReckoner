@@ -1,21 +1,13 @@
 import { createServerClient } from './supabase/server'
-
-export type ReckonerRow = {
-    id: string
-    category: string
-    tax_year: string
-    sub_category: string
-    data: any
-    effective_from: string | null
-    notes: string | null
-    last_updated: string
-    is_active: boolean
-}
+import { ReckonerRow, TaxCategory } from '@/types/tax'
 
 /**
  * Core query helper to fetch tax reference tables
  */
-export async function getReckonerTable(category: string, taxYear?: string): Promise<ReckonerRow[]> {
+export async function getReckonerTable<T = any>(
+    category: TaxCategory,
+    taxYear?: string
+): Promise<ReckonerRow<T>[]> {
     const supabase = createServerClient()
 
     let query = supabase
