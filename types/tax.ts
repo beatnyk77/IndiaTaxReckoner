@@ -8,7 +8,17 @@ export type TaxCategory =
     | 'depreciation-rates'
     | 'tds-tcs-rates'
     | 'cii-history'
-    | 'new-act-changes';
+    | 'new-act-changes'
+    | 'partnership'
+    | 'llp'
+    | 'private-company'
+    | 'public-company'
+    | 'trust'
+    | 'aop-boi'
+    | 'assessment'
+    | 'appeals'
+    | 'search-seizure'
+    | 'penalties';
 
 export interface TaxSlab {
     income_range: string;
