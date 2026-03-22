@@ -27,13 +27,15 @@ export function Navbar() {
                         <AYSwitcher />
                     </Suspense>
                     <div className="hidden lg:flex items-center gap-6 border-l border-border/40 pl-6 ml-2">
-                        <Link href="#tax-slabs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
+                        <Link href="/calculator" className="transition-colors hover:text-foreground text-primary font-semibold flex items-center gap-2">
                             <Calculator className="h-4 w-4" />
-                            <span>Tax Slabs</span>
+                            <span>Calculator</span>
                         </Link>
-                        <Link href="#tds-tcs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
-                            <FileText className="h-4 w-4" />
-                            <span>TDS / TCS</span>
+                        <Link href="/tax-slabs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
+                            <span>Slabs</span>
+                        </Link>
+                        <Link href="/tds-tcs-rates" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
+                            <span>TDS</span>
                         </Link>
                     </div>
                 </nav>

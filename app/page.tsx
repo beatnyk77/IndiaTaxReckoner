@@ -77,8 +77,17 @@ export default function HomePage() {
                         India's most comprehensive, blazing-fast digital reference for tax rates, thresholds, and statutory definitions.
                     </p>
 
-                    <div className="mt-10 w-full max-w-xl mx-auto">
-                        <SearchBar />
+                    <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mx-auto px-4">
+                        <div className="w-full flex-1">
+                            <SearchBar />
+                        </div>
+                        <Link
+                            href="/calculator"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground h-10 px-6 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap"
+                        >
+                            <Calculator className="h-4 w-4" />
+                            <span>Try Tax Estimator</span>
+                        </Link>
                     </div>
                 </div>
             </section>
