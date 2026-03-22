@@ -103,28 +103,41 @@ export function calculateTrustTax(
  */
 export function calculatePartnershipTax(
     bookProfit: number,
-    actualRemuneration: number
+    actualRemuneration: number,
+    isPresumptive: boolean = false,
+    turnover: number = 0,
+    isProfessionalServices: boolean = false
 ): PartnershipTaxResult {
-    // 40(b) Limit logic
-    let limit = 0;
-    if (bookProfit <= 300000) {
-        limit = Math.max(150000, bookProfit * 0.90);
+    let finalTaxableIncome = 0;
+    let remunerationLimit = 0;
+
+    if (isPresumptive) {
+        // Section 44AD (8% / 6%) or 44ADA (50%)
+        const presumptiveRate = isProfessionalServices ? 0.50 : 0.08;
+        finalTaxableIncome = turnover * presumptiveRate;
+        remunerationLimit = 0; // Not applicable in presumptive
     } else {
-        limit = 270000 + (bookProfit - 300000) * 0.60;
+        // 40(b) Limit logic on Book Profit
+        if (bookProfit <= 300000) {
+            remunerationLimit = Math.max(150000, bookProfit * 0.90);
+        } else {
+            remunerationLimit = 270000 + (bookProfit - 300000) * 0.60;
+        }
+
+        const allowedRemuneration = Math.min(remunerationLimit, actualRemuneration);
+        finalTaxableIncome = Math.max(0, bookProfit - allowedRemuneration);
     }
 
-    const allowedRemuneration = Math.min(limit, actualRemuneration);
-    const taxableIncome = bookProfit - allowedRemuneration;
-    const firmTax = taxableIncome * 0.30;
-    const surcharge = firmTax > 10000000 ? firmTax * 0.12 : 0;
-    const cess = (firmTax + surcharge) * 0.04;
+    const baseTax = finalTaxableIncome * 0.30;
+    const surcharge = finalTaxableIncome > 10000000 ? baseTax * 0.12 : 0;
+    const cess = (baseTax + surcharge) * 0.04;
 
     return {
-        book_profit: bookProfit,
-        remuneration_limit: limit,
-        actual_remuneration: actualRemuneration,
-        firm_taxable_income: taxableIncome,
-        tax_payable: firmTax + surcharge + cess,
+        book_profit: isPresumptive ? 0 : bookProfit,
+        remuneration_limit: remunerationLimit,
+        actual_remuneration: isPresumptive ? 0 : actualRemuneration,
+        firm_taxable_income: finalTaxableIncome,
+        tax_payable: baseTax + surcharge + cess,
         surcharge,
         cess
     };
