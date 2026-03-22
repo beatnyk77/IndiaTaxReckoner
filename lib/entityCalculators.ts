@@ -69,14 +69,23 @@ export function calculateCompanyTax(
  */
 export function calculateTrustTax(
     grossReceipts: number,
-    appliedAmount: number
+    voluntaryContributions: number,
+    appliedAmount: number,
+    accumulation11_2: number = 0
 ): TrustTaxResult {
-    const minApplication = grossReceipts * 0.85;
-    const accumulation15 = grossReceipts * 0.15;
+    const totalIncome = grossReceipts + voluntaryContributions;
 
-    const shortfall = Math.max(0, minApplication - appliedAmount);
-    const taxableIncome = shortfall; // Simplified for reference
-    const taxRate = 0.30; // MMR for trusts
+    // Statutory 15% is exempt without conditions
+    const accumulation15 = totalIncome * 0.15;
+
+    // 85% must be applied for charitable purposes
+    const requiredApplication = totalIncome * 0.85;
+
+    // Shortfall after application and notified accumulation under 11(2)
+    const shortfall = Math.max(0, requiredApplication - appliedAmount - accumulation11_2);
+
+    const taxableIncome = shortfall;
+    const taxRate = 0.30; // Standard rate for trusts failing application requirements
 
     return {
         gross_receipts: grossReceipts,
@@ -84,7 +93,7 @@ export function calculateTrustTax(
         accumulation_15: accumulation15,
         taxable_income: taxableIncome,
         tax_payable: taxableIncome * taxRate,
-        deemed_income: shortfall,
+        deemed_income: shortfall, // Deemed as income of the year in case of non-application
         shortfall
     };
 }
