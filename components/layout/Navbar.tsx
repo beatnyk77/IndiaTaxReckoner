@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { Landmark, FileText, Calculator } from 'lucide-react'
+import { Landmark, FileText, Calculator, Scale } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { AYSwitcher } from '@/components/AYSwitcher'
 
@@ -26,15 +26,50 @@ export function Navbar() {
                     <Suspense fallback={<div className="h-9 w-[160px] animate-pulse bg-muted rounded-xl" />}>
                         <AYSwitcher />
                     </Suspense>
-                    <div className="hidden lg:flex items-center gap-6 border-l border-border/40 pl-6 ml-2">
+                    <div className="hidden xl:flex items-center gap-6 border-l border-border/40 pl-6 ml-2">
                         <Link href="/calculator" className="transition-colors hover:text-foreground text-primary font-semibold flex items-center gap-2">
                             <Calculator className="h-4 w-4" />
                             <span>Calculator</span>
                         </Link>
-                        <Link href="/tax-slabs" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
+
+                        {/* Entities Dropdown */}
+                        <div className="relative group">
+                            <button className="flex items-center gap-1 transition-colors text-foreground/60 hover:text-foreground">
+                                <span>Entities</span>
+                                <FileText className="h-3 w-3 opacity-50" />
+                            </button>
+                            <div className="absolute top-full -left-4 hidden group-hover:block pt-4 w-56">
+                                <div className="bg-background/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl p-2 grid gap-1">
+                                    <Link href="/partnerships" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Partnerships</Link>
+                                    <Link href="/llps" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">LLPs</Link>
+                                    <Link href="/private-companies" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Private Cos</Link>
+                                    <Link href="/public-companies" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Public Cos</Link>
+                                    <Link href="/trusts" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Trusts</Link>
+                                    <Link href="/aop-boi" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">AOP / BOI</Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Compliance Dropdown */}
+                        <div className="relative group">
+                            <button className="flex items-center gap-1 transition-colors text-foreground/60 hover:text-foreground">
+                                <span>Compliance</span>
+                                <Scale className="h-3 w-3 opacity-50" />
+                            </button>
+                            <div className="absolute top-full -left-4 hidden group-hover:block pt-4 w-64">
+                                <div className="bg-background/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl p-2 grid gap-1">
+                                    <Link href="/assessment-proceedings" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Assessment Proceedings</Link>
+                                    <Link href="/appeals" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Appeals (CIT/ITAT)</Link>
+                                    <Link href="/search-seizure" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Search & Seizure</Link>
+                                    <Link href="/penalties-prosecution" className="px-4 py-2 hover:bg-muted/50 rounded-xl transition-colors">Penalties & Prosecution</Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Link href="/tax-slabs" className="transition-colors hover:text-foreground/80 text-foreground/60">
                             <span>Slabs</span>
                         </Link>
-                        <Link href="/tds-tcs-rates" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-2">
+                        <Link href="/tds-tcs-rates" className="transition-colors hover:text-foreground/80 text-foreground/60">
                             <span>TDS</span>
                         </Link>
                     </div>

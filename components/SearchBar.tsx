@@ -62,19 +62,24 @@ export function SearchBar() {
                 />
                 <CommandList className="max-h-[400px]">
                     <CommandEmpty>Press Enter to search all tax records.</CommandEmpty>
+                    <CommandGroup heading="Business Entities">
+                        <CommandItem onSelect={() => navigateTo('/partnerships')}>Partnerships Reference</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/llps')}>LLP Provisions</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/private-companies')}>Private Companies (Domestic)</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/public-companies')}>Public & Listed Companies</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/trusts')}>Trusts & Charitable Institutions</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/aop-boi')}>AOP & BOI Rules</CommandItem>
+                    </CommandGroup>
+                    <CommandGroup heading="Compliance & Procedures">
+                        <CommandItem onSelect={() => navigateTo('/assessment-proceedings')}>Assessment Proceedings</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/appeals')}>Appeals (CIT/ITAT/HC)</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/search-seizure')}>Search & Seizure Protocol</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/penalties-prosecution')}>Penalties & Prosecution</CommandItem>
+                    </CommandGroup>
                     <CommandGroup heading="Quick Links">
-                        <CommandItem onSelect={() => navigateTo('/tax-slabs')}>
-                            Tax Slabs (New Regime)
-                        </CommandItem>
-                        <CommandItem onSelect={() => navigateTo('/deductions-limits')}>
-                            Deductions & Limits
-                        </CommandItem>
-                        <CommandItem onSelect={() => navigateTo('/tds-tcs-rates')}>
-                            TDS / TCS Rates
-                        </CommandItem>
-                        <CommandItem onSelect={() => navigateTo('/new-act-changes')}>
-                            New Act 2025 Highlights
-                        </CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/calculator')}>Interactive Tax Estimator</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/tax-slabs')}>Tax Slabs (New Regime)</CommandItem>
+                        <CommandItem onSelect={() => navigateTo('/tds-tcs-rates')}>TDS / TCS Rates</CommandItem>
                     </CommandGroup>
                 </CommandList>
             </CommandDialog>

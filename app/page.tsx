@@ -52,12 +52,28 @@ const categories = [
         bg: "bg-rose-500/10",
     },
     {
-        title: "New Act 2025 Changes",
-        description: "Key highlights and major impacts of the rewritten Income-tax Act 2025.",
-        icon: Scale,
-        href: "/new-act-changes",
+        title: "Business Entities",
+        description: "Taxation and special provisions for Partnerships, LLPs, Companies, and Trusts.",
+        icon: Calculator,
+        href: "/partnerships",
         color: "text-indigo-500",
         bg: "bg-indigo-500/10",
+    },
+    {
+        title: "Compliance & Procedures",
+        description: "Guide to Assessment proceedings, Appeals, Search & Seizure, and Penalties.",
+        icon: Scale,
+        href: "/assessment-proceedings",
+        color: "text-orange-500",
+        bg: "bg-orange-500/10",
+    },
+    {
+        title: "New Act 2025 Changes",
+        description: "Key highlights and major impacts of the rewritten Income-tax Act 2025.",
+        icon: History,
+        href: "/new-act-changes",
+        color: "text-blue-500",
+        bg: "bg-blue-500/10",
     },
 ];
 
