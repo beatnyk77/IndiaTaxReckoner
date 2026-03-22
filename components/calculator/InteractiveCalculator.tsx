@@ -2,8 +2,15 @@
 
 import * as React from 'react'
 import { TaxInputForm } from './TaxInputForm'
-import { TaxResults } from './TaxResults'
+import dynamic from 'next/dynamic'
 import { calculateFullTaxComparison } from '@/lib/taxCalculator'
+
+const TaxResults = dynamic(() => import('./TaxResults').then(mod => mod.TaxResults), {
+    ssr: false,
+    loading: () => <div className="h-96 flex items-center justify-center bg-muted/10 border border-dashed rounded-3xl animate-pulse">
+        <p className="text-muted-foreground font-medium">Hydrating analysis engine...</p>
+    </div>
+})
 import { TaxCalculatorInputs, TaxCalculatorResults } from '@/types/calculator'
 import { ReckonerRow } from '@/types/tax'
 

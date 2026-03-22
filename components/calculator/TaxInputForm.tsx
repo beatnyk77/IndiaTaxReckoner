@@ -75,7 +75,10 @@ export function TaxInputForm({ onInputChange, initialValues }: Props) {
                                     defaultValue={[inputs.income.salary]}
                                     max={10000000}
                                     step={50000}
-                                    onValueChange={([val]) => handleChange('income.salary', val)}
+                                    onValueChange={(vals) => {
+                                        const val = Array.isArray(vals) ? vals[0] : vals;
+                                        handleChange('income.salary', val);
+                                    }}
                                     className="py-4"
                                 />
                                 <Input

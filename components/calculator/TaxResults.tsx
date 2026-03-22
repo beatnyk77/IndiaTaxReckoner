@@ -12,15 +12,17 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle2, AlertCircle, TrendingUp, Wallet, Download } from 'lucide-react'
 import { TaxCalculatorResults, TaxRegimeBreakdown } from '@/types/calculator'
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 
 interface Props {
     results: TaxCalculatorResults
 }
 
 export function TaxResults({ results }: Props) {
-    const downloadReport = () => {
+    const downloadReport = async () => {
+        // Dynamic import to avoid SSR issues with Workers
+        const { default: jsPDF } = await import('jspdf')
+        const { default: autoTable } = await import('jspdf-autotable')
+
         const doc = new jsPDF()
 
         // Header

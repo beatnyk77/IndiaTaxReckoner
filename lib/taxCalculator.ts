@@ -67,7 +67,7 @@ export function calculateRegimeTax(
         if (range.includes('Above')) {
             lower = parseInt(range.replace(/[^0-9]/g, '')) * 100000;
         } else {
-            const parts = range.split('-').map(p => parseInt(p.replace(/[^0-9]/g, '')) * 100000);
+            const parts = range.split('-').map((p: string) => parseInt(p.replace(/[^0-9]/g, '')) * 100000);
             lower = parts[0];
             upper = parts[1];
         }
