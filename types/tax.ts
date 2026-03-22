@@ -90,3 +90,50 @@ export interface ReckonerRow<T = any> {
     last_updated: string;
     is_active: boolean;
 }
+/**
+ * Entity-Specific Calculation Results
+ */
+
+export interface CompanyTaxResult {
+    total_income: number;
+    book_profit: number;
+    normal_tax: number;
+    mat_tax: number;
+    effective_tax: number;
+    surcharge: number;
+    cess: number;
+    total_payable: number;
+    is_mat_applicable: boolean;
+}
+
+export interface TrustTaxResult {
+    gross_receipts: number;
+    applied_amount: number;
+    accumulation_15: number;
+    taxable_income: number;
+    tax_payable: number;
+    deemed_income: number;
+    shortfall: number;
+}
+
+export interface PartnershipTaxResult {
+    book_profit: number;
+    remuneration_limit: number;
+    actual_remuneration: number;
+    firm_taxable_income: number;
+    tax_payable: number;
+    surcharge: number;
+    cess: number;
+}
+
+export interface AOPBOITaxResult {
+    total_income: number;
+    share_taxable_at_aop: boolean;
+    mmr_applicable: boolean;
+    total_tax: number;
+    share_of_members: {
+        member: string;
+        share: number;
+        tax_impact: number;
+    }[];
+}
