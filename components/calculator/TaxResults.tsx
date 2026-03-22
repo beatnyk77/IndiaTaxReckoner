@@ -10,14 +10,54 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { CheckCircle2, AlertCircle, TrendingUp, Wallet } from 'lucide-react'
+import { CheckCircle2, AlertCircle, TrendingUp, Wallet, Download } from 'lucide-react'
 import { TaxCalculatorResults, TaxRegimeBreakdown } from '@/types/calculator'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
 interface Props {
     results: TaxCalculatorResults
 }
 
 export function TaxResults({ results }: Props) {
+    const downloadReport = () => {
+        const doc = new jsPDF()
+
+        // Header
+        doc.setFontSize(22)
+        doc.text('India Tax Comparison Report', 20, 20)
+        doc.setFontSize(10)
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 28)
+        doc.text('Basis: New Income-tax Act 2025 Proposals (AY 2027-28)', 20, 33)
+
+        // Table Data
+        const rows = [
+            ['Gross Total Income', results.oldRegime.grossTotalIncome, results.newRegime.grossTotalIncome],
+            ['Total Deductions', results.oldRegime.totalDeductions, results.newRegime.totalDeductions],
+            ['Taxable Income', results.oldRegime.taxableIncome, results.newRegime.taxableIncome],
+            ['Tax Before Surcharge', results.oldRegime.taxBeforeSurcharge, results.newRegime.taxBeforeSurcharge],
+            ['Rebate 87A', results.oldRegime.rebate87A, results.newRegime.rebate87A],
+            ['Surcharge & Cess', results.oldRegime.surcharge + results.oldRegime.cess, results.newRegime.surcharge + results.newRegime.cess],
+            ['Total Liability', results.oldRegime.totalTaxLiability, results.newRegime.totalTaxLiability],
+            ['Effective Rate', `${results.oldRegime.effectiveRate.toFixed(2)}%`, `${results.newRegime.effectiveRate.toFixed(2)}%`],
+        ]
+
+        autoTable(doc, {
+            startY: 45,
+            head: [['Metric', 'Old Regime (INR)', 'New Regime (INR)']],
+            body: rows,
+            theme: 'grid',
+            headStyles: { fillColor: [79, 70, 229] }
+        })
+
+        // Recommendation
+        const finalY = (doc as any).lastAutoTable.finalY || 100
+        doc.setFontSize(14)
+        doc.text(`Recommended Regime: ${results.recommendedRegime.toUpperCase()}`, 20, finalY + 20)
+        doc.text(`Potential Annual Savings: INR ${results.savings.toLocaleString('en-IN')}`, 20, finalY + 30)
+
+        doc.save('India_Tax_Report.pdf')
+    }
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -119,11 +159,18 @@ export function TaxResults({ results }: Props) {
                 </Card>
             )}
 
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-center text-xs text-muted-foreground italic">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between text-xs text-muted-foreground italic">
                 <div className="flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" />
                     Calculations are based on the New Income-tax Act 2025 proposals.
                 </div>
+                <button
+                    onClick={downloadReport}
+                    className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-xl font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-xl"
+                >
+                    <Download className="h-3 w-3" />
+                    Download Report (PDF)
+                </button>
             </div>
         </div>
     )
