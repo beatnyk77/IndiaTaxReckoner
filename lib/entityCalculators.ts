@@ -3,7 +3,7 @@
  * Logic for Companies (MAT), Trusts (Accumulation), and Partnerships.
  */
 
-import { CompanyTaxResult, TrustTaxResult, PartnershipTaxResult, AOPBOITaxResult } from "./types/tax";
+import { CompanyTaxResult, TrustTaxResult, PartnershipTaxResult, AOPBOITaxResult } from "@/types/tax";
 
 /**
  * Company MAT vs Normal Tax Calculator
@@ -13,31 +13,53 @@ export function calculateCompanyTax(
     totalIncome: number,
     bookProfit: number,
     optedForConcessional: boolean = false,
-    isInitialPhase: boolean = false // for Sec 115BAB
+    isInitialPhaseBAB: boolean = false
 ): CompanyTaxResult {
-    const normalRateArray = optedForConcessional ? (isInitialPhase ? 0.15 : 0.22) : 0.25; // simplified logic
-    let normalTax = totalIncome * normalRateArray;
+    // 1. Normal Tax Calculation
+    const normalBaseRate = optedForConcessional
+        ? (isInitialPhaseBAB ? 0.15 : 0.22)
+        : 0.25; // 25% if turnover <= 400Cr (prototype default)
 
-    // MAT logic (only if not opted for concessional)
-    const matRate = 0.15;
-    const matTax = optedForConcessional ? 0 : bookProfit * matRate;
+    let normalTax = totalIncome * normalBaseRate;
 
-    const isMatApplicable = !optedForConcessional && matTax > normalTax;
-    const baseTax = isMatApplicable ? matTax : normalTax;
+    // 2. MAT Calculation (Sec 115JB)
+    const matBaseRate = 0.15;
+    const matTaxInitial = optedForConcessional ? 0 : bookProfit * matBaseRate;
 
-    // Simplified surcharge/cess (using flat rates for prototype)
-    const surcharge = baseTax * 0.07; // assume mid-range
-    const cess = (baseTax + surcharge) * 0.04;
+    // 3. Surcharge Logic
+    let normalSurcharge = 0;
+    let matSurcharge = 0;
+
+    if (optedForConcessional) {
+        normalSurcharge = normalTax * 0.10; // Fixed 10% for BAA/BAB
+    } else {
+        // Tiered surcharge for Domestic Companies
+        if (totalIncome > 100000000) normalSurcharge = normalTax * 0.12;
+        else if (totalIncome > 10000000) normalSurcharge = normalTax * 0.07;
+
+        if (bookProfit > 100000000) matSurcharge = matTaxInitial * 0.12;
+        else if (bookProfit > 10000000) matSurcharge = matTaxInitial * 0.07;
+    }
+
+    const totalNormal = normalTax + normalSurcharge;
+    const totalMat = matTaxInitial + matSurcharge;
+
+    const isMatApplicable = !optedForConcessional && totalMat > totalNormal;
+    const effectiveBaseTax = isMatApplicable ? matTaxInitial : normalTax;
+    const effectiveSurcharge = isMatApplicable ? matSurcharge : normalSurcharge;
+
+    // 4. Health & Education Cess
+    const cess = (effectiveBaseTax + effectiveSurcharge) * 0.04;
 
     return {
         total_income: totalIncome,
         book_profit: bookProfit,
-        normal_tax: normalTax,
-        mat_tax: matTax,
-        effective_tax: baseTax,
-        surcharge,
+        normal_tax: totalNormal + (totalNormal * 0.04), // inclusive of cess for display
+        mat_tax: totalMat + (totalMat * 0.04),
+        effective_tax: effectiveBaseTax,
+        surcharge: effectiveSurcharge,
         cess,
-        total_payable: baseTax + surcharge + cess,
+        total_payable: effectiveBaseTax + effectiveSurcharge + cess,
         is_mat_applicable: isMatApplicable
     };
 }
