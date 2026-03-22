@@ -142,3 +142,58 @@ export function calculatePartnershipTax(
         cess
     };
 }
+
+/**
+ * AOP/BOI Share-of-Income Calculator
+ */
+export function calculateAOPBOITax(
+    totalIncome: number,
+    isIndeterminate: boolean,
+    maxMemberIndividualIncome: number = 0,
+    memberShares: { name: string, sharePercent: number }[] = []
+): AOPBOITaxResult {
+    const BEL = 300000; // Basic Exemption Limit for individuals (simplified)
+    const mmrRate = 0.30;
+
+    let shareTaxableAtAOP = false;
+    let mmrApplicable = false;
+    let totalTax = 0;
+
+    if (isIndeterminate) {
+        mmrApplicable = true;
+        shareTaxableAtAOP = true;
+    } else {
+        if (maxMemberIndividualIncome > BEL) {
+            mmrApplicable = true;
+            shareTaxableAtAOP = true;
+        } else {
+            // Simplified progressive tax (Individual slabs)
+            shareTaxableAtAOP = true;
+            mmrApplicable = false;
+        }
+    }
+
+    if (mmrApplicable) {
+        const baseTax = totalIncome * mmrRate;
+        const surcharge = totalIncome > 10000000 ? baseTax * 0.12 : 0;
+        totalTax = (baseTax + surcharge) * 1.04;
+    } else {
+        // Individual slabs simulation
+        if (totalIncome <= BEL) totalTax = 0;
+        else if (totalIncome <= 700000) totalTax = (totalIncome - BEL) * 0.05;
+        else totalTax = (totalIncome - 700000) * 0.10 + 20000; // Rough approx
+        totalTax = totalTax * 1.04;
+    }
+
+    return {
+        total_income: totalIncome,
+        share_taxable_at_aop: shareTaxableAtAOP,
+        mmr_applicable: mmrApplicable,
+        total_tax: totalTax,
+        share_of_members: memberShares.map(m => ({
+            member: m.name,
+            share: (totalIncome * m.sharePercent) / 100,
+            tax_impact: shareTaxableAtAOP ? 0 : ((totalIncome * m.sharePercent) / 100) * mmrRate
+        }))
+    };
+}
