@@ -125,7 +125,7 @@ export function TaxInputForm({ onInputChange, initialValues }: Props) {
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="80c">Section 80C (LIC, PPF, ELSS)</Label>
+                                    <Label htmlFor="80c">Section 123 (Investments / LIC / PPF)</Label>
                                     <Input
                                         id="80c"
                                         type="number"
@@ -137,7 +137,7 @@ export function TaxInputForm({ onInputChange, initialValues }: Props) {
                                     <p className="text-[10px] text-muted-foreground italic">Max limit applies (1.5L)</p>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="80d">Section 80D (Health Insurance)</Label>
+                                    <Label htmlFor="80d">Section 124 (Health Insurance)</Label>
                                     <Input
                                         id="80d"
                                         type="number"

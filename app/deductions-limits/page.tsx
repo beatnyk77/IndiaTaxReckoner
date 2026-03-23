@@ -25,12 +25,12 @@ export default async function DeductionsPage({ searchParams }: Props) {
                         <TrendingDown className="h-6 w-6 text-emerald-500" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-extrabold tracking-tight">Deductions & Tax Limits</h1>
+                        <h1 className="text-3xl font-extrabold tracking-tight">Deductions & Tax Limits (Act 2025)</h1>
                         <p className="text-muted-foreground text-sm mt-0.5">Assessment Year {ay}</p>
                     </div>
                 </div>
                 <p className="text-muted-foreground max-w-2xl leading-relaxed">
-                    Key deductions, exemptions, and limits available under the Income-tax Act for individuals and HUFs for AY {ay}.
+                    Key deductions, exemptions (Sec 123/124), and limits available under the New Income-tax Act, 2025 for AY {ay}.
                 </p>
             </div>
 
@@ -45,8 +45,8 @@ export default async function DeductionsPage({ searchParams }: Props) {
 
             {rebate && (
                 <TaxTable
-                    title="Rebates, Surcharge & Cess"
-                    subtitle="Section 87A relief, Health & Education Cess, and AMT provisions"
+                    title="Rebates (Section 155), Surcharge & Cess"
+                    subtitle="Section 155 relief, Health & Education Cess, and AMT re-linked provisions"
                     data={rebate.data as RebateSurchargeInfo[]}
                     notes={rebate.notes}
                 />

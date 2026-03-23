@@ -25,12 +25,12 @@ export default async function TDSTCSPage({ searchParams }: Props) {
                         <Percent className="h-6 w-6 text-purple-500" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-extrabold tracking-tight">TDS & TCS Rates</h1>
+                        <h1 className="text-3xl font-extrabold tracking-tight">TDS & TCS (Act 2025)</h1>
                         <p className="text-muted-foreground text-sm mt-0.5">Assessment Year {ay}</p>
                     </div>
                 </div>
                 <p className="text-muted-foreground max-w-2xl leading-relaxed">
-                    Tax Deducted at Source and Tax Collected at Source rates, thresholds, and applicable sections for AY {ay}.
+                    Tax Deducted at Source and Tax Collected at Source rates under the New Income-tax Act, 2025 (Section 393 onwards) for AY {ay}.
                     PAN not furnished leads to higher rates (double or 5%, whichever is higher).
                 </p>
             </div>

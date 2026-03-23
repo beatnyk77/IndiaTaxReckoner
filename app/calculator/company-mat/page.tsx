@@ -34,7 +34,7 @@ export default function CompanyCalculatorPage() {
                                 Corporate Tax <span className="text-primary italic">&</span> MAT
                             </h1>
                             <p className="text-muted-foreground text-lg max-w-2xl">
-                                Compare Normal Provisions against Minimum Alternate Tax (Section 115JB) and concessional regimes for AY 2027-28.
+                                Compare Normal Provisions against Minimum Alternate Tax (Section 206) and concessional regimes for AY 2027-28.
                             </p>
                         </div>
 

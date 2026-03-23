@@ -17,8 +17,8 @@ export default async function NewActPage() {
                         <Scale className="h-6 w-6 text-indigo-500" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-extrabold tracking-tight">New Income-tax Act 2025</h1>
-                        <p className="text-muted-foreground text-sm mt-0.5">Effective from AY 2027-28</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight">Income-tax Act, 2025 (Highlights)</h1>
+                        <p className="text-muted-foreground text-sm mt-0.5">Renumbered & Rationalized Provisions</p>
                     </div>
                 </div>
                 <p className="text-muted-foreground max-w-2xl leading-relaxed">

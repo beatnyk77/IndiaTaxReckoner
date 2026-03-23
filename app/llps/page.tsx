@@ -31,7 +31,7 @@ export default async function LLPsPage({ searchParams }: Props) {
                     </div>
                 </div>
                 <p className="text-muted-foreground max-w-2xl leading-relaxed">
-                    Taxation and compliance framework for Limited Liability Partnerships (LLPs) for AY {ay}.
+                    Taxation and compliance framework for Limited Liability Partnerships (LLPs) for AY {ay} under the New Income-tax Act, 2025.
                     LLPs combine the flexibility of partnerships with the limited liability benefits of a company.
                 </p>
             </div>
