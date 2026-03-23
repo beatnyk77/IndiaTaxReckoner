@@ -28,12 +28,12 @@ export default async function TaxSlabsPage({ searchParams }: Props) {
                         <Calculator className="h-6 w-6 text-blue-500" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-extrabold tracking-tight">Tax Slabs & Rates</h1>
-                        <p className="text-muted-foreground text-sm mt-0.5">Assessment Year {ay}</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight">Tax Slabs & Rates (Act 2025)</h1>
+                        <p className="text-muted-foreground text-sm mt-0.5">Assessment Year {ay} | Default Regime</p>
                     </div>
                 </div>
                 <p className="text-muted-foreground max-w-2xl leading-relaxed">
-                    Income tax slab rates applicable for individuals, HUFs, and NRIs under both the New and Old Tax Regimes for AY {ay}.
+                    Income tax slab rates under the New Income-tax Act, 2025 (default regime) and re-linked legacy regimes for AY {ay}.
                     Surcharge and Health &amp; Education Cess are additional.
                 </p>
             </div>

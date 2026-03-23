@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Suspense } from "react"
 import { getEntityTable } from "@/lib/queries"
 import { TaxTable } from "@/components/TaxTable"
@@ -36,6 +37,25 @@ export default async function AopBoiPage({ searchParams }: Props) {
                 </p>
             </div>
 
+            {/* Quick Action Simulator */}
+            <div className="bg-primary/5 border border-primary/20 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 group hover:bg-primary/[0.07] transition-all text-white">
+                <div className="space-y-2 text-center md:text-left">
+                    <h2 className="text-xl font-bold flex items-center gap-2 justify-center md:justify-start">
+                        <Users className="h-5 w-5 text-orange-500" />
+                        AOP/BOI Share Simulator
+                    </h2>
+                    <p className="text-sm text-muted-foreground max-w-md">
+                        Calculate entity level tax liability and derive distributive share-of-income impacts for members.
+                    </p>
+                </div>
+                <Link
+                    href="/calculator/aop-boi"
+                    className="bg-primary px-8 py-3 rounded-2xl font-bold text-sm uppercase tracking-widest text-white hover:opacity-90 transition-all shadow-xl shadow-primary/20 whitespace-nowrap"
+                >
+                    Open Simulator
+                </Link>
+            </div>
+
             {/* Tax Rates */}
             <Suspense fallback={<TableSkeleton />}>
                 {taxRates && (
@@ -53,7 +73,7 @@ export default async function AopBoiPage({ searchParams }: Props) {
                 {provisions && (
                     <TaxTable
                         title="Share & Membership Provisions"
-                        subtitle="Section 167B and double tax relief"
+                        subtitle="Section 197 MMR and double tax relief"
                         data={provisions.data as any[]}
                         notes={provisions.notes}
                     />

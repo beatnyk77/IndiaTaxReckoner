@@ -1,7 +1,8 @@
+import Link from "next/link"
 import { Suspense } from "react"
 import { getEntityTable } from "@/lib/queries"
 import { TaxTable } from "@/components/TaxTable"
-import { Landmark } from "lucide-react"
+import { Landmark, Building } from "lucide-react"
 
 interface Props {
     searchParams: Promise<{ ay?: string }>
@@ -30,10 +31,29 @@ export default async function PublicCompaniesPage({ searchParams }: Props) {
                         <p className="text-muted-foreground text-sm mt-0.5">Assessment Year {ay}</p>
                     </div>
                 </div>
-                <p className="text-muted-foreground max-w-2xl leading-relaxed">
+                <p className="text-muted-foreground max-w-2xl leading-relaxed text-white">
                     Taxation rules for public listed companies and foreign entities for AY {ay}.
                     Covers specific surcharges, securities transaction tax (STT) implications, and dividend rules.
                 </p>
+            </div>
+
+            {/* Quick Action Simulator */}
+            <div className="bg-primary/5 border border-primary/20 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 group hover:bg-primary/[0.07] transition-all text-white">
+                <div className="space-y-2 text-center md:text-left">
+                    <h2 className="text-xl font-bold flex items-center gap-2 justify-center md:justify-start text-white">
+                        <Building className="h-5 w-5 text-sky-500" />
+                        Corporate Tax Analyzer
+                    </h2>
+                    <p className="text-sm text-muted-foreground max-w-md">
+                        Calculate MAT liability vs Normal Tax and evaluate buyback or dividend distribution impacts.
+                    </p>
+                </div>
+                <Link
+                    href="/calculator/company-mat"
+                    className="bg-primary px-8 py-3 rounded-2xl font-bold text-sm uppercase tracking-widest text-white hover:opacity-90 transition-all shadow-xl shadow-primary/20 whitespace-nowrap"
+                >
+                    Launch Calculator
+                </Link>
             </div>
 
             {/* Tax Rates */}

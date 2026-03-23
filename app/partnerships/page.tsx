@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Suspense } from "react"
 import { getEntityTable } from "@/lib/queries"
 import { TaxTable } from "@/components/TaxTable"
@@ -34,6 +35,25 @@ export default async function PartnershipsPage({ searchParams }: Props) {
                     Taxation rules and rates applicable to Partnership Firms (including LLPs) for AY {ay}.
                     Partnership firms are taxed at a flat rate, with specific rules for partner remuneration and interest.
                 </p>
+            </div>
+
+            {/* Quick Action Simulator */}
+            <div className="bg-primary/5 border border-primary/20 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 group hover:bg-primary/[0.07] transition-all">
+                <div className="space-y-2 text-center md:text-left">
+                    <h2 className="text-xl font-bold flex items-center gap-2 justify-center md:justify-start">
+                        <Users className="h-5 w-5 text-primary" />
+                        Firm Tax Simulator
+                    </h2>
+                    <p className="text-sm text-muted-foreground max-w-md">
+                        Instantly calculate tax on Book Profits under Section 39 or check eligibility for Presumptive Taxation (Sections 61/62).
+                    </p>
+                </div>
+                <Link
+                    href="/calculator/partnership-llp"
+                    className="bg-primary px-8 py-3 rounded-2xl font-bold text-sm uppercase tracking-widest text-white hover:opacity-90 transition-all shadow-xl shadow-primary/20 whitespace-nowrap"
+                >
+                    Launch Calculator
+                </Link>
             </div>
 
             {/* Tax Rates */}

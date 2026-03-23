@@ -5,10 +5,12 @@ import { Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
 import { calculatePartnershipTax } from "@/lib/entityCalculators"
 import { PartnershipTaxResult } from "@/types/tax"
-import { Users, Briefcase, Calculator, Info, Scale, Percent } from 'lucide-react'
+import { Users, Briefcase, Calculator, Info, Scale, Percent, Save, RotateCcw, Download } from 'lucide-react'
+import { generateTaxPDF } from "@/lib/pdfExport"
 
 export function PartnershipCalculator() {
     const [mode, setMode] = React.useState<'actual' | 'presumptive'>('actual')
@@ -22,8 +24,26 @@ export function PartnershipCalculator() {
     const [isProfessional, setIsProfessional] = React.useState(false)
 
     const [results, setResults] = React.useState<PartnershipTaxResult | null>(null)
+    const [isLoaded, setIsLoaded] = React.useState(false)
+
+    // Persistence
+    React.useEffect(() => {
+        const saved = localStorage.getItem('partnership_tax_scenario')
+        if (saved) {
+            try {
+                const data = JSON.parse(saved)
+                setMode(data.mode)
+                setBookProfit(data.bookProfit)
+                setActualRemuneration(data.actualRemuneration)
+                setTurnover(data.turnover)
+                setIsProfessional(data.isProfessional)
+            } catch (e) { console.error(e) }
+        }
+        setIsLoaded(true)
+    }, [])
 
     React.useEffect(() => {
+        if (!isLoaded) return;
         const res = calculatePartnershipTax(
             mode === 'actual' ? bookProfit : 0,
             mode === 'actual' ? actualRemuneration : 0,
@@ -32,7 +52,46 @@ export function PartnershipCalculator() {
             mode === 'presumptive' && isProfessional
         );
         setResults(res);
-    }, [mode, bookProfit, actualRemuneration, turnover, isProfessional]);
+    }, [mode, bookProfit, actualRemuneration, turnover, isProfessional, isLoaded]);
+
+    const handleSave = () => {
+        localStorage.setItem('partnership_tax_scenario', JSON.stringify({ mode, bookProfit, actualRemuneration, turnover, isProfessional }));
+        alert('Firm scenario saved!');
+    }
+
+    const handleReset = () => {
+        if (confirm('Reset inputs?')) {
+            setBookProfit(1000000);
+            setActualRemuneration(500000);
+            setTurnover(2000000);
+            setIsProfessional(false);
+            localStorage.removeItem('partnership_tax_scenario');
+        }
+    }
+
+    const downloadPDF = async () => {
+        if (!results) return;
+        await generateTaxPDF({
+            title: "Partnership & LLP Tax Report",
+            subtitle: `Basis: Income-tax Act, 2025 | Route: ${mode.toUpperCase()} Taxation`,
+            fileName: "Mahanka_Firm_Tax_Report.pdf",
+            summary: [
+                { label: mode === "actual" ? "Book Profit" : "Turnover", value: formatINR(mode === "actual" ? bookProfit : turnover) },
+                { label: "Taxable Base", value: formatINR(results.firm_taxable_income) },
+                { label: "Final Tax Payable", value: formatINR(results.tax_payable) }
+            ],
+            tableHead: ["Metric", "Value (INR)"],
+            tableRows: [
+                ["Book Profit / Base", formatINR(mode === "actual" ? bookProfit : turnover)],
+                ["Section 39 Remuneration Limit", formatINR(results.remuneration_limit)],
+                ["Taxable Income (after ded.)", formatINR(results.firm_taxable_income)],
+                ["Base Tax (30% flat)", formatINR(results.tax_payable - results.surcharge - results.cess)],
+                ["Surcharge (12%)", formatINR(results.surcharge)],
+                ["Education Cess (4%)", formatINR(results.cess)],
+                ["Net Payable", formatINR(results.tax_payable)]
+            ]
+        });
+    }
 
     const formatINR = (amount: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -42,10 +101,26 @@ export function PartnershipCalculator() {
         }).format(amount);
     };
 
-    if (!results) return null;
+    if (!isLoaded || !results) return null;
 
     return (
         <div className="space-y-8 max-w-6xl mx-auto">
+            {/* Persistence Bar */}
+            <div className="flex border border-white/5 bg-background/20 p-2 rounded-2xl justify-between items-center px-4">
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                    Drafting Session
+                </div>
+                <div className="flex gap-4">
+                    <button onClick={handleReset} className="flex items-center gap-1.5 text-[10px] font-black uppercase text-muted-foreground hover:text-rose-400 transition-colors">
+                        <RotateCcw className="h-3 w-3" /> Reset
+                    </button>
+                    <button onClick={handleSave} className="flex items-center gap-1.5 text-[10px] font-black uppercase text-primary hover:opacity-80">
+                        <Save className="h-3 w-3" /> Save Scenario
+                    </button>
+                </div>
+            </div>
+
             {/* Mode Selection Tabs */}
             <div className="flex justify-center">
                 <Tabs value={mode} onValueChange={(v) => setMode(v as any)} className="w-[400px]">
@@ -69,7 +144,6 @@ export function PartnershipCalculator() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Input Panel */}
                 <Card className="p-6 bg-background/40 backdrop-blur-xl border-white/10 space-y-6">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
                         {mode === 'actual' ? <Briefcase className="h-5 w-5 text-primary" /> : <Users className="h-5 w-5 text-emerald-500" />}
@@ -86,7 +160,7 @@ export function PartnershipCalculator() {
                                         type="number"
                                         value={bookProfit}
                                         onChange={(e) => setBookProfit(Number(e.target.value))}
-                                        className="bg-background/50 border-white/10"
+                                        className="bg-background/50 border-white/10 text-white"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -96,7 +170,7 @@ export function PartnershipCalculator() {
                                         type="number"
                                         value={actualRemuneration}
                                         onChange={(e) => setActualRemuneration(Number(e.target.value))}
-                                        className="bg-background/50 border-white/10"
+                                        className="bg-background/50 border-white/10 text-white"
                                     />
                                 </div>
                             </>
@@ -109,13 +183,13 @@ export function PartnershipCalculator() {
                                         type="number"
                                         value={turnover}
                                         onChange={(e) => setTurnover(Number(e.target.value))}
-                                        className="bg-background/50 border-white/10"
+                                        className="bg-background/50 border-white/10 text-white"
                                     />
                                 </div>
                                 <div className="flex items-center justify-between p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/20">
                                     <div className="space-y-0.5">
                                         <Label className="text-sm font-bold">Professional Services?</Label>
-                                        <p className="text-[10px] text-muted-foreground">Opt for Sec 44ADA (50% flat rate)</p>
+                                        <p className="text-[10px] text-muted-foreground">Opt for Section 62 (50% flat rate)</p>
                                     </div>
                                     <Switch
                                         checked={isProfessional}
@@ -127,7 +201,6 @@ export function PartnershipCalculator() {
                     </div>
                 </Card>
 
-                {/* Analysis/Limit Card */}
                 <Card className="p-6 bg-background/40 backdrop-blur-xl border-white/10 flex flex-col justify-center gap-6">
                     {mode === 'actual' ? (
                         <div className="space-y-4 text-center">
@@ -135,12 +208,11 @@ export function PartnershipCalculator() {
                                 <Info className="h-6 w-6" />
                             </div>
                             <div className="space-y-1">
-                                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Sec 40(b) Ceiling</h4>
+                                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Section 39 Ceiling</h4>
                                 <div className="text-3xl font-black text-white">{formatINR(results.remuneration_limit)}</div>
                             </div>
                             <p className="text-xs text-muted-foreground px-4">
-                                Maximum deductible salary/interest for partners based on tiered profits.
-                                Excess paid is disallowed and taxed at firm level.
+                                Maximum deductible salary/interest for partners based on renumbered Section 39 limits.
                             </p>
                         </div>
                     ) : (
@@ -153,7 +225,7 @@ export function PartnershipCalculator() {
                                 <div className="text-4xl font-black text-white">{isProfessional ? '50%' : '8%'}</div>
                             </div>
                             <p className="text-xs text-muted-foreground px-4">
-                                Estimated net income for tax purposes. No book profit or expense audit required below statutory thresholds.
+                                Estimated net income for tax purposes.
                             </p>
                         </div>
                     )}
@@ -164,7 +236,7 @@ export function PartnershipCalculator() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="p-8 bg-muted/10 border-white/5 border-dashed flex flex-col items-center justify-center space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Firm Taxable Base</span>
-                    <div className="text-4xl font-black">{formatINR(results.firm_taxable_income)}</div>
+                    <div className="text-4xl font-black text-white">{formatINR(results.firm_taxable_income)}</div>
                 </Card>
 
                 <Card className="p-8 bg-primary/10 border-primary/20 relative overflow-hidden group">
@@ -175,23 +247,23 @@ export function PartnershipCalculator() {
                         <span className="text-xs font-bold uppercase tracking-widest text-primary">Final Tax Payable</span>
                         <div className="text-5xl font-black text-primary font-mono">{formatINR(results.tax_payable)}</div>
                         <div className="flex gap-4 pt-4 mt-2">
-                            <div className="text-[10px] text-muted-foreground">Surcharge: {formatINR(results.surcharge)}</div>
-                            <div className="text-[10px] text-muted-foreground">Cess (4%): {formatINR(results.cess)}</div>
+                            <div className="text-[10px] text-muted-foreground font-bold">SC: {formatINR(results.surcharge)}</div>
+                            <div className="text-[10px] text-muted-foreground font-bold">Cess: {formatINR(results.cess)}</div>
                         </div>
                     </div>
                 </Card>
             </div>
 
-            {/* Statutory Disclaimer */}
-            <div className="p-4 bg-muted/20 rounded-xl border border-white/5 text-center">
-                <p className="text-[10px] text-muted-foreground italic leading-relaxed">
-                    Calculation based on Fixed 30% Tax Rate for Partnerships/LLPs.
-                    {mode === 'actual'
-                        ? ' Actual route requires audited book profits.'
-                        : ' Presumptive route (44AD/ADA) has specific turnover limits (3Cr/75L).'}
-                    Consult the {mode === 'actual' ? 'Section 40(b)' : 'Section 44'} guidelines for precise eligibility.
-                </p>
-            </div>
+            <Card className="p-6 bg-background/20 backdrop-blur-xl border-white/5">
+                <div className="flex justify-end">
+                    <Button
+                        onClick={downloadPDF}
+                        className="bg-foreground text-background hover:opacity-90 rounded-xl font-bold uppercase tracking-widest text-[10px] h-10 px-6"
+                    >
+                        <Download className="h-3.5 w-3.5 mr-2" /> Download Report
+                    </Button>
+                </div>
+            </Card>
         </div>
     )
 }

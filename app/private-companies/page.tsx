@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Suspense } from "react"
 import { getEntityTable } from "@/lib/queries"
 import { TaxTable } from "@/components/TaxTable"
@@ -31,9 +32,28 @@ export default async function PrivateCompaniesPage({ searchParams }: Props) {
                     </div>
                 </div>
                 <p className="text-muted-foreground max-w-2xl leading-relaxed">
-                    Taxation framework for Domestic Private Companies for AY {ay}.
-                    Includes turnover-linked rates, special concessional regimes, and surcharge thresholds.
+                    Taxation framework for Private Limited Companies for AY {ay}.
+                    Covers corporate tax slabs, Section 206 (MAT) implications, and concessional tax regimes.
                 </p>
+            </div>
+
+            {/* Quick Action Simulator */}
+            <div className="bg-primary/5 border border-primary/20 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 group hover:bg-primary/[0.07] transition-all text-white">
+                <div className="space-y-2 text-center md:text-left">
+                    <h2 className="text-xl font-bold flex items-center gap-2 justify-center md:justify-start">
+                        <Building className="h-5 w-5 text-emerald-500" />
+                        Corporate Tax & MAT Simulator
+                    </h2>
+                    <p className="text-sm text-muted-foreground max-w-md">
+                        Compare Normal Tax with MAT (Sec 115JB) and analyze the impact of Concessional Regimes (115BAA/BAB).
+                    </p>
+                </div>
+                <Link
+                    href="/calculator/company-mat"
+                    className="bg-primary px-8 py-3 rounded-2xl font-bold text-sm uppercase tracking-widest text-white hover:opacity-90 transition-all shadow-xl shadow-primary/20 whitespace-nowrap"
+                >
+                    Start Analysis
+                </Link>
             </div>
 
             {/* Tax Rates */}

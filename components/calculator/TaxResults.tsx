@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle2, AlertCircle, TrendingUp, Wallet, Download } from 'lucide-react'
 import { TaxCalculatorResults, TaxRegimeBreakdown } from '@/types/calculator'
+import { generateTaxPDF } from "@/lib/pdfExport"
 
 interface Props {
     results: TaxCalculatorResults
@@ -19,46 +20,32 @@ interface Props {
 
 export function TaxResults({ results }: Props) {
     const downloadReport = async () => {
-        // Dynamic import to avoid SSR issues with Workers
-        const { default: jsPDF } = await import('jspdf')
-        const { default: autoTable } = await import('jspdf-autotable')
-
-        const doc = new jsPDF()
-
-        // Header
-        doc.setFontSize(22)
-        doc.text('India Tax Comparison Report', 20, 20)
-        doc.setFontSize(10)
-        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 28)
-        doc.text('Basis: New Income-tax Act 2025 Proposals (AY 2027-28)', 20, 33)
-
-        // Table Data
-        const rows = [
-            ['Gross Total Income', results.oldRegime.grossTotalIncome, results.newRegime.grossTotalIncome],
-            ['Total Deductions', results.oldRegime.totalDeductions, results.newRegime.totalDeductions],
-            ['Taxable Income', results.oldRegime.taxableIncome, results.newRegime.taxableIncome],
-            ['Tax Before Surcharge', results.oldRegime.taxBeforeSurcharge, results.newRegime.taxBeforeSurcharge],
-            ['Rebate 87A', results.oldRegime.rebate87A, results.newRegime.rebate87A],
-            ['Surcharge & Cess', results.oldRegime.surcharge + results.oldRegime.cess, results.newRegime.surcharge + results.newRegime.cess],
-            ['Total Liability', results.oldRegime.totalTaxLiability, results.newRegime.totalTaxLiability],
-            ['Effective Rate', `${results.oldRegime.effectiveRate.toFixed(2)}%`, `${results.newRegime.effectiveRate.toFixed(2)}%`],
-        ]
-
-        autoTable(doc, {
-            startY: 45,
-            head: [['Metric', 'Old Regime (INR)', 'New Regime (INR)']],
-            body: rows,
-            theme: 'grid',
-            headStyles: { fillColor: [79, 70, 229] }
-        })
-
-        // Recommendation
-        const finalY = (doc as any).lastAutoTable.finalY || 100
-        doc.setFontSize(14)
-        doc.text(`Recommended Regime: ${results.recommendedRegime.toUpperCase()}`, 20, finalY + 20)
-        doc.text(`Potential Annual Savings: INR ${results.savings.toLocaleString('en-IN')}`, 20, finalY + 30)
-
-        doc.save('India_Tax_Report.pdf')
+        await generateTaxPDF({
+            title: "India Tax Comparison Report",
+            subtitle: "Basis: New Income-tax Act 2025 Proposals (AY 2027-28)",
+            fileName: "India_Tax_Report.pdf",
+            summary: [
+                { label: "Recommended Regime", value: results.recommendedRegime.toUpperCase() },
+                { label: "Potential Savings", value: formatINR(results.savings) }
+            ],
+            tableHead: ["Metric", "Old Regime (INR)", "New Regime (INR)"],
+            tableRows: [
+                ['Gross Total Income', formatINR(results.oldRegime.grossTotalIncome), formatINR(results.newRegime.grossTotalIncome)],
+                ['Total Deductions', formatINR(results.oldRegime.totalDeductions), formatINR(results.newRegime.totalDeductions)],
+                ['Taxable Income', formatINR(results.oldRegime.taxableIncome), formatINR(results.newRegime.taxableIncome)],
+                ['Tax Before Surcharge', formatINR(results.oldRegime.taxBeforeSurcharge), formatINR(results.newRegime.taxBeforeSurcharge)],
+                ['Rebate (Section 155)', formatINR(results.oldRegime.rebate87A), formatINR(results.newRegime.rebate87A)],
+                ['Surcharge & Cess', formatINR(results.oldRegime.surcharge + results.oldRegime.cess), formatINR(results.newRegime.surcharge + results.newRegime.cess)],
+                ['Total Liability', formatINR(results.oldRegime.totalTaxLiability), formatINR(results.newRegime.totalTaxLiability)],
+            ]
+        });
+    }
+    const formatINR = (amount: number) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0
+        }).format(amount);
     }
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -112,7 +99,7 @@ export function TaxResults({ results }: Props) {
                     </div>
                     {data.rebate87A > 0 && (
                         <div className="flex justify-between text-sm text-emerald-500 font-medium">
-                            <span>Rebate 87A</span>
+                            <span>Rebate (Section 155)</span>
                             <span className="font-mono">-{formatCurrency(data.rebate87A)}</span>
                         </div>
                     )}

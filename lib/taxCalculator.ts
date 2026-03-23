@@ -27,8 +27,8 @@ export function calculateRegimeTax(
     // 2. Apply Deductions
     let totalDeductions = 0;
     if (isNewRegime) {
-        // New Act 2025: Standard Deduction is typically 75,000 for salaried
-        // Other deductions are mostly blocked except NPS employer contribution (simplified here)
+        // New Act 2025 (Section 123 logic): Standard Deduction is 75,000 for salaried
+        // Section 155 provides rebate up to 12L taxable income.
         totalDeductions = inputs.deductions.standardDeduction;
     } else {
         // Old Regime: Sum of all deductions
